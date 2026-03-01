@@ -196,9 +196,116 @@ spanning-tree mode pvst
 do wr
 ```
 
+---
+# Configuración SWITCHES EDIFICIO DER
 
+## Multilayer Switch  11
+
+```bash
+
+enable
+conf t
+hostname MULT_SWITCH_11
+banner motd #
+*************************************************
+* ACCESO RESTRINGIDO - SOLO PERSONAL AUTORIZADO *
+*************************************************
+#
+!VLANS 
+
+vtp domain 202202233
+vtp password 202202233
+vtp version 2
+vtp mode server
 
 vlan 30
  name VLAN_Naranja_EdificioDER_33
 vlan 40
  name VLAN_Verde_EdificioDER_33
+exit
+
+interface range Gig0/1-2
+switchport mode trunk
+switchport trunk allowed vlan 30,40
+exit
+
+interface range Fa0/1-2
+switchport mode trunk
+switchport trunk allowed vlan 30,40
+
+!STP
+spanning-tree mode pvst
+
+do wr
+```
+
+## Switch 2
+```bash
+
+enable
+conf t
+hostname SWITCH_2
+banner motd #
+*************************************************
+*            BIENVENIDO AL SWITCH 2             *
+*************************************************
+#
+vtp domain 202202233
+vtp password 202202233
+vtp version 2
+vtp mode client
+
+interface range Fa0/3
+switchport mode trunk
+switchport trunk allowed vlan 30,40
+exit
+
+interface Fa0/1
+switchport mode access
+switchport access vlan 40
+
+interface Fa0/2
+switchport mode access
+switchport access vlan 30
+
+!STP
+spanning-tree mode pvst
+
+do wr
+```
+
+## Switch 3
+```bash
+
+enable
+conf t
+hostname SWITCH_3
+banner motd #
+*************************************************
+*            BIENVENIDO AL SWITCH 3             *
+*************************************************
+#
+vtp domain 202202233
+vtp password 202202233
+vtp version 2
+vtp mode client
+
+interface range Fa0/3
+switchport mode trunk
+switchport trunk allowed vlan 30,40
+exit
+
+interface Fa0/1
+switchport mode access
+switchport access vlan 40
+
+interface Fa0/2
+switchport mode access
+switchport access vlan 30
+
+!STP
+spanning-tree mode pvst
+
+do wr
+```
+
