@@ -37,18 +37,22 @@ Para ~20 enlaces (ej. MAN entre 4 MSW3650: 6 enlaces; Core-Distribución IZQ: 2;
 | 1. | 10.4.33.0/30 | MS6 | 4 | 10.4.33.1 | MS1 | 4 | 10.4.33.2 |
 | 2. | 10.4.33.4/30 | MS0 | 5 | 10.4.33.5 | MS1 | 5 | 10.4.33.6 |
 
+### Tabla port channel edificio derecho
+| MS | No | Puertos |
+|----|----|---------|
+| MS11 | 6 | fa0/3-4 |
+| MS5 | 6 | fa0/1-2 |
+| MS5 | 7 | fa0/3-6 |
+| MS9 | 7 | fa0/1-4 |
+| MS9 | 8 | fa0/5-7 |
+| MS3 | 8 | gi1/0/1-3 |
+
 ### Tabla para el edificio derecho
-| No. | Subred | Switch1 | Puerto1 | ip | Switch2 | Puerto 2| ip |
+| No. | Subred | Switch1 | Portchannel | ip | Switch2 | Portchannel | ip |
 |-----|--------|---------|---------|----|---------|---------|----|
-| 1. | 10.4.33.36/30 | MS3 | Gi1/0/1 | 10.4.33.37 | MS9 | fa0/5 | 10.4.33.38 |
-| 2. | 10.4.33.40/30 | MS3 | Gi1/0/2 | 10.4.33.41 | MS9 | fa0/6 | 10.4.33.42 |
-| 3. | 10.4.33.44/30 | MS3 | Gi1/0/3 | 10.4.33.45 | MS9 | fa0/7 | 10.4.33.46 |
-| 4. | 10.4.33.48/30 | MS9 | fa0/1 | 10.4.33.49 | R1 | fa0/0/0 | 10.4.33.50 |
-| 5. | 10.4.33.52/30 | MS9 | fa0/2 | 10.4.33.53 | R1 | fa0/0/1 | 10.4.33.54 |
-| 6. | 10.4.33.56/30 | MS9 | fa0/3 | 10.4.33.57 | R1 | fa0/0/2 | 10.4.33.58 |
-| 7. | 10.4.33.60/30 | MS9 | fa0/4 | 10.4.33.61 | R1 | fa0/0/3 | 10.4.33.62 |
-| 8. | 10.4.33.64/30 | R1 | Gi0/0 | 10.4.33.65 | MS11 | Gi0/1 | 10.4.33.66 |
-| 9. | 10.4.33.68/30 | R1 | Gi0/1 | 10.4.33.69 | MS11 | Gi0/2 | 10.4.33.70 |
+| 1. | 10.4.33.8 /30 | M5  | 7 | 10.4.33.9 | MS9 | 7 | 10.4.33.10 |
+| 2. | 10.4.33.12/30 | MS9 | 8 | 10.4.33.13 | MS3 | 8 | 10.4.33.14 |
+| 3. | 10.4.33.16/30 | MS11 | 6 | 10.4.33.17 | MS5 | 6 | 10.4.33.18 |
 
 ## Instrucciones de Uso
 - Asigna VLANs: 10=NaranjaIZQ, 20=VerdeIZQ, 30=NaranjaDER, 40=VerdeDER, 99=ADMIN.
@@ -376,7 +380,7 @@ exit
 
 router eigrp 1
  network 192.188.33.0 0.0.0.255
- network 10.4.33.0 0.0.0.3
+ network 10.4.33.0 0.0.0.3 
  no auto-summary
 end 
 wr
@@ -387,6 +391,7 @@ wr
 
 router eigrp 1
  network 10.4.33.0 0.0.0.3
+ network 10.4.33.4 0.0.0.3
  no auto-summary
 end
 wr
@@ -405,7 +410,7 @@ exit
 
 router eigrp 1
  network 192.188.33.0 0.0.0.255
- network 10.4.33.0 0.0.0.3
+ network 10.4.33.4 0.0.0.3
  no auto-summary
 end
 wr
@@ -526,4 +531,131 @@ switchport access vlan 30
 spanning-tree mode pvst
 
 do wr
+```
+
+## Configuración PagP
+
+### Multislayer Switch 11
+```bash
+conf t
+ip routing
+
+interface vlan 30
+ ip add 192.188.33.17 255.255.255.248
+interface vlan 40
+ ip add 192.188.33.25 255.255.255.248
+exit
+
+interface rang fa0/3-4
+ no switchport
+ channel-group 6 mode desirable
+exit
+
+interface port-channel 6
+ ip add 10.4.33.17 255.255.255.252
+ no shutdown
+exit
+
+```
+
+### Multislayer Switch 5
+
+```bash
+enable
+conf t
+hostname MULT_SWITCH_5
+banner motd #
+*************************************************
+*          BIENVENIDO AL MULT_SWITCH 5          *
+*************************************************
+#
+
+ip routing 
+
+interface rang fa0/1-2
+ no switchport
+ channel-group 6 mode desirable
+exit
+
+interface port-channel 6
+ ip add 10.4.33.18 255.255.255.252
+ no shutdwon
+exit
+
+interface rang fa0/3-6
+ no switchport 
+ channel-group 7 mode desirable
+exit
+
+interface port-channel 7
+ ip add 10.4.33.9 255.255.255.252
+ no shutdown
+end
+wr
+
+```
+
+### Multislayer Switch 9
+
+```bash
+enable
+conf t
+hostname MULT_SWITCH_9
+banner motd #
+*************************************************
+*          BIENVENIDO AL MULT_SWITCH 9          *
+*************************************************
+#
+
+ip routing 
+
+interface rang fa0/1-4
+ no switchport 
+ channel-group 7 mode desirable
+exit
+
+interface port-channel 7
+ ip add 10.4.33.10 255.255.255.252
+ no shutdown
+end
+wr
+
+interface rang fa0/5-7
+ no switchport 
+ channel-group 8 mode desirable
+exit
+
+interface port-channel 8
+ ip add 10.4.33.13 255.255.255.252
+ no shutdown
+end
+wr
+
+```
+
+### Multislayer Switch 3
+
+```bash
+enable
+conf t
+hostname MULT_SWITCH_3
+banner motd #
+*************************************************
+*          BIENVENIDO AL MULT_SWITCH 3          *
+*************************************************
+#
+
+ip routing
+
+interface rang gi1/0/1-3 
+ no switchport 
+ channel-group 8 mode desirable
+exit
+
+interface port-channel 8
+ ip add 10.4.33.14 255.255.255.252
+ no shutdown
+end
+wr
+
 ```
