@@ -540,12 +540,6 @@ do wr
 conf t
 ip routing
 
-interface vlan 30
- ip add 192.188.33.17 255.255.255.248
-interface vlan 40
- ip add 192.188.33.25 255.255.255.248
-exit
-
 interface rang fa0/3-4
  no switchport
  channel-group 6 mode desirable
@@ -656,6 +650,66 @@ interface port-channel 8
  ip add 10.4.33.14 255.255.255.252
  no shutdown
 end
+wr
+
+```
+
+## Configuración EIGRP
+
+### Multslayer Switch 11
+```bash
+conf t
+
+interface vlan 30
+ ip add 192.188.33.17 255.255.255.248
+interface vlan 40
+ ip add 192.188.33.25 255.255.255.248
+exit
+
+router eigrp 2
+ network 192.188.33.0 0.0.0.255
+ network 10.4.33.16 0.0.0.3
+ no auto-summary
+ end
+wr
+
+```
+
+
+### Multslayer Switch 5
+```bash
+conf t
+
+router eigrp 2
+ network 10.4.33.16 0.0.0.3
+ network 10.4.33.8 0.0.0.3
+ no auto-summary
+ end
+wr
+
+```
+
+### Multslayer Switch 9
+```bash
+conf t
+
+router eigrp 2
+ network 10.4.33.8 0.0.0.3
+ network 10.4.33.12 0.0.0.3
+ no auto-summary
+ end
+wr
+
+```
+
+### Multslayer Switch 3
+```bash
+conf t
+
+router eigrp 2
+ network 10.4.33.12 0.0.0.3
+ no auto-summary
+ end
 wr
 
 ```
