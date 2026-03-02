@@ -31,9 +31,10 @@ Para ~20 enlaces (ej. MAN entre 4 MSW3650: 6 enlaces; Core-Distribución IZQ: 2;
 
 ---
 
-# Configuración SWITCHES EDIFICIO IZQ
+# Configuración de Switches Edificio Izquierdo
 
-## Multislayer Switch 1
+## Configuraciones básicas, creación y distribución de vlans
+### Multislayer Switch 1
 
 ```bash
 !Configuraciones comunes
@@ -69,7 +70,7 @@ spanning-tree mode pvst
 
 do wr
 ```
-## Multislayer Switch 0
+### Multislayer Switch 0
 ```bash
 !Configuraciones comunes
 
@@ -97,7 +98,7 @@ spanning-tree mode pvst
 do wr
 ```
 
-## Multislayer Switch 6
+### Multislayer Switch 6
 ```bash
 !Configuraciones comunes
 
@@ -126,7 +127,7 @@ do wr
 
 ```
 
-## Switch 0
+### Switch 0
 ```bash
 
 enable
@@ -161,7 +162,7 @@ spanning-tree mode pvst
 do wr
 ```
 
-## Switch 1
+### Switch 1
 ```bash
 
 enable
@@ -196,10 +197,157 @@ spanning-tree mode pvst
 do wr
 ```
 
----
-# Configuración SWITCHES EDIFICIO DER
+## Configuraciones de LACP
 
-## Multilayer Switch  11
+### Switch 0
+```bash
+enable
+conf t
+interface range fa0/3 - 4
+ channel-group 1 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 1
+ description LACP-SW0-a-MLS0
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+end
+wr
+
+```
+### Switch 1
+```bash
+enable
+conf t
+interface range f0/3-4
+channel-group 2 mode active
+switchport mode trunk
+switchport trunk allowed vlan 10,20
+exit
+interface port-channel 2
+decription LACP-SW1-a-MLS6
+switchport mode trunk
+switchport trunk allowed vlan 10,20
+end
+wr
+```
+
+
+### Multislayer Switch 0
+```bash
+enable
+conf t
+
+interface range fa0/1 - 2
+ channel-group 1 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 1
+ description LACP-MLS0-a-SW0
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range f0/3-5
+ channel-group 3 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+ exit
+interface port-channel 3
+ description LACP-MLS0-a-MLS6
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range fa0/6-8
+ channel-group 5 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 5
+ description LACP-MLS0-a-MLS1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+end
+wr
+
+
+```
+
+### Multislayer Switch 6
+```bash
+enable
+conf t
+
+interface range fa0/1 - 2
+ channel-group 2 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 2
+ description LACP-MLS6-a-SW1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range f0/6-8
+ channel-group 3 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+ exit
+interface port-channel 3
+ description LACP-MLS6-a-MLS0
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range f0/3-5
+ channel-group 4 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 4
+ description LACP-MLS6-a-MLS1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+end
+wr
+```
+
+### Multislayer Switch 1
+```bash
+interface range Gig1/0/1-3
+ channel-group 4 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 4
+ description LACP-MLS1-a-MLS6
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range Gig1/0/4-6
+ channel-group 5 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 5
+ description LACP-MLS1-a-MLS0
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+end
+wr
+```
+
+---
+# Configuración de Switches Edificio Derecho
+
+## Configuraciones básicas, creación y distribución de vlans
+
+### Multilayer Switch  11
 
 ```bash
 
