@@ -3,26 +3,33 @@
 ## Tabla Subredes VLANs (192.168.33.0/24 VLSM)
 Asigna gateways en primera usable (SVI o router-on-stick). Usa rangos para PCs/DHCP.
 
-| VLAN | Subred | Máscara | Gateway | Rango Usable PCs | Broadcast | Hosts PCs |
-|------|--------|---------|---------|------------------|-----------|-----------|
-| 1 (NaranjaIZQ) | 192.168.33.0/27 | 255.255.255.224 | 192.168.33.1 | 192.168.33.2 - .30 | 192.168.33.31 | 3   |
-| 2 (VerdeIZQ) | 192.168.33.32/28 | 255.255.255.240 | 192.168.33.33 | 192.168.33.34 - .46 | 192.168.33.47 | 2   |
-| 3 (NaranjaDER) | 192.168.33.48/28 | 255.255.255.240 | 192.168.33.49 | 192.168.33.50 - .62 | 192.168.33.63 | 2   |
-| 4 (VerdeDER) | 192.168.33.64/30 | 255.255.255.252 | 192.168.33.65 | 192.168.33.66 - .69 | 192.168.33.71 | 1   |
-| 5 (ADMIN) | 192.168.33.72/30 | 255.255.255.252 | 192.168.33.73 | 192.168.33.74 - .77 | 192.168.33.79 | 1   |
+| VLAN | Subred | Máscara | Gateway |
+|------|--------|---------|---------|
+| 10 | 192.168.33.0/29 | 255.255.255.248 | 192.168.33.1 |
+| 20 | 192.168.33.4/29 | 255.255.255.248 | 192.168.33.5 |
+| 30 | 192.168.33.8/29 | 255.255.255.248 | 192.168.33.9 |
+| 40 | 192.168.33.12/29 | 255.255.255.248 | 192.168.33.13 |
+| 99 | 192.168.33.16/29 | 255.255.255.248 | 192.168.33.17 |
 
 Queda espacio libre: 192.168.33.80/24 en adelante para expansiones. 
 
 ## Tabla Enlaces Punto-a-Punto (10.4.33.0/24 FLSM /30)
 Para ~20 enlaces (ej. MAN entre 4 MSW3650: 6 enlaces; Core-Distribución IZQ: 2; inter-VLAN routers; etc.). Cada /30: End A (.1), End B (.2).
 
-| Enlace # | Subred | End A | End B |
-|----------|--------|-------|-------|
-| 1 (ej. MAN Edif1-2) | 10.4.33.0/30 | 10.4.33.1 | 10.4.33.2   |
-| 2 | 10.4.33.4/30 | 10.4.33.5 | 10.4.33.6   |
-| 3 | 10.4.33.8/30 | 10.4.33.9 | 10.4.33.10   |
-| ... | ... | ... | ... |
-| 20 | 10.4.33.76/30 | 10.4.33.77 | 10.4.33.78   |
+10.4.33.0/30
+
+#### Tabla para el edificio izquierdo
+| No. | Subred | Switch1 | Puerto1 | ip | Switch2 | Puerto 2| ip |
+|-----|--------|---------|---------|----|---------|---------|----|
+| 1. | 10.4.33.0/30 | MS 1 | gi1/0/1 | 10.4.33.1 | MS6 | fa0/3 | 10.4.33.2 |
+| 2. | 10.4.33.4/30 | MS 1 | gi1/0/2 | 10.4.33.5 | MS6 | fa0/4 | 10.4.33.6 |
+| 3. | 10.4.33.8/30 | MS 1 | gi1/0/3 | 10.4.33.9 | MS6 | fa0/5 | 10.4.33.10 |
+| 4. | 10.4.33.12/30 | MS 1 | gi1/0/4 | 10.4.33.13 | MS0 | fa0/6 | 10.4.33.14 |
+| 5. | 10.4.33.16/30 | MS 1 | gi1/0/5 | 10.4.33.17 | MS0 | fa0/7 | 10.4.33.18 |
+| 6. | 10.4.33.20/30 | MS 1 | gi1/0/6 | 10.4.33.21 | MS0 | fa0/8 | 10.4.33.22 |
+| 7. | 10.4.33.24/30 | MS 0 | fa0/3 | 10.4.33.25 | MS6 | fa0/6 | 10.4.33.26 |
+| 8. | 10.4.33.28/30 | MS 0 | fa0/4 | 10.4.33.29 | MS6 | fa0/7 | 10.4.33.30 |
+| 9. | 10.4.33.32/30 | MS 0 | fa0/5 | 10.4.33.33 | MS6 | fa0/8 | 10.4.33.34 |
 
 ## Instrucciones de Uso
 - Asigna VLANs: 10=NaranjaIZQ, 20=VerdeIZQ, 30=NaranjaDER, 40=VerdeDER, 99=ADMIN.
@@ -31,9 +38,10 @@ Para ~20 enlaces (ej. MAN entre 4 MSW3650: 6 enlaces; Core-Distribución IZQ: 2;
 
 ---
 
-# Configuración SWITCHES EDIFICIO IZQ
+# Configuración de Switches Edificio Izquierdo
 
-## Multislayer Switch 1
+## Configuraciones básicas, creación y distribución de vlans
+### Multislayer Switch 1
 
 ```bash
 !Configuraciones comunes
@@ -69,7 +77,7 @@ spanning-tree mode pvst
 
 do wr
 ```
-## Multislayer Switch 0
+### Multislayer Switch 0
 ```bash
 !Configuraciones comunes
 
@@ -97,7 +105,7 @@ spanning-tree mode pvst
 do wr
 ```
 
-## Multislayer Switch 6
+### Multislayer Switch 6
 ```bash
 !Configuraciones comunes
 
@@ -126,7 +134,7 @@ do wr
 
 ```
 
-## Switch 0
+### Switch 0
 ```bash
 
 enable
@@ -161,7 +169,7 @@ spanning-tree mode pvst
 do wr
 ```
 
-## Switch 1
+### Switch 1
 ```bash
 
 enable
@@ -196,10 +204,159 @@ spanning-tree mode pvst
 do wr
 ```
 
----
-# Configuración SWITCHES EDIFICIO DER
+## Configuraciones de LACP
 
-## Multilayer Switch  11
+### Switch 0
+```bash
+enable
+conf t
+interface range fa0/3 - 4
+ channel-group 1 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 1
+ description LACP-SW0-a-MLS0
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+end
+wr
+
+```
+### Switch 1
+```bash
+enable
+conf t
+interface range f0/3-4
+channel-group 2 mode active
+switchport mode trunk
+switchport trunk allowed vlan 10,20
+exit
+interface port-channel 2
+decription LACP-SW1-a-MLS6
+switchport mode trunk
+switchport trunk allowed vlan 10,20
+end
+wr
+```
+
+
+### Multislayer Switch 0
+```bash
+enable
+conf t
+
+interface range fa0/1 - 2
+ channel-group 1 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 1
+ description LACP-MLS0-a-SW0
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range f0/3-5
+ channel-group 3 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+ exit
+interface port-channel 3
+ description LACP-MLS0-a-MLS6
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range fa0/6-8
+ channel-group 5 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 5
+ description LACP-MLS0-a-MLS1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+end
+wr
+
+
+```
+
+### Multislayer Switch 6
+```bash
+enable
+conf t
+
+interface range fa0/1 - 2
+ channel-group 2 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 2
+ description LACP-MLS6-a-SW1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range f0/6-8
+ channel-group 3 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+ exit
+interface port-channel 3
+ description LACP-MLS6-a-MLS0
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range f0/3-5
+ channel-group 4 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 4
+ description LACP-MLS6-a-MLS1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+end
+wr
+```
+
+### Multislayer Switch 1
+```bash
+interface range Gig1/0/1-3
+ channel-group 4 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 4
+ description LACP-MLS1-a-MLS6
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+
+interface range Gig1/0/4-6
+ channel-group 5 mode active
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+exit
+interface port-channel 5
+ description LACP-MLS1-a-MLS0
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+end
+wr
+```
+
+## Configuración EIGRIP
+
+---
+# Configuración de Switches Edificio Derecho
+
+## Configuraciones básicas, creación y distribución de vlans
+
+### Multilayer Switch  11
 
 ```bash
 
