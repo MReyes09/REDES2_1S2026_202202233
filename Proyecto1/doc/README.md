@@ -374,8 +374,8 @@ interface vlan 20
  no shutdown
 exit
 
-router eigrp 10
- network 192.188.33.0 0.0.0.7
+router eigrp 1
+ network 192.188.33.0 0.0.0.255
  network 10.4.33.0 0.0.0.3
  no auto-summary
 end 
@@ -385,8 +385,8 @@ wr
 ### Multislayer Switch 1
 ```bash
 
-router eigrp 10
- network 10.4.33.0 0.0.0.7
+router eigrp 1
+ network 10.4.33.0 0.0.0.3
  no auto-summary
 end
 wr
@@ -395,8 +395,16 @@ wr
 ### Multislayer Switch 0
 ```bash
 
-router eigrp 10
- network 192.188.33.0 0.0.0.7
+interface vlan 10
+ ip address 192.188.33.1 255.255.255.248
+ no shutdown
+interface vlan 20
+ ip address 192.188.33.9 255.255.255.248
+ no shutdown
+exit
+
+router eigrp 1
+ network 192.188.33.0 0.0.0.255
  network 10.4.33.0 0.0.0.3
  no auto-summary
 end
