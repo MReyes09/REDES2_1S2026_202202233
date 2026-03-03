@@ -431,6 +431,36 @@ end
 wr
 ```
 
+## Configuración General DHCP
+
+### Multilayer Switch 0
+```bash
+interface vlan 10
+ ip helper-address 10.4.33.42
+ no shutdown
+exit
+
+interface vlan 20
+ ip helper-address 10.4.33.42
+ no shutdown
+end
+wr
+```
+
+### Multilayer Switch 6
+```bash
+interface vlan 10
+ ip helper-address 10.4.33.42
+ no shutdown
+exit
+
+interface vlan 20
+ ip helper-address 10.4.33.42
+ no shutdown
+end
+wr
+```
+
 
 ---
 # Configuración de Switches Edificio Derecho
@@ -729,9 +759,25 @@ wr
 
 ```
 
+## Configuración DHCP
+```bash
+interface vlan 30
+ ip helper-address 10.4.33.42
+ no shutdown
+exit
+
+interface vlan 40
+ ip helper-address 10.4.33.42
+ no shutdown
+end
+wr
+```
+
 # Configuración Switches Central
 
-## Multislayer Switch 2
+## Configuración EIGRP
+
+### Multislayer Switch 2
 ```bash
 
 enable
@@ -783,7 +829,7 @@ wr
 
 ```
 
-## Multislayer Switchport 1
+### Multislayer Switchport 1
 
 ```bash
 interface gi1/1/1
@@ -814,7 +860,7 @@ wr
 
 ```
 
-## Multislayer Switchport 3
+### Multislayer Switchport 3
 
 ```bash
 interface gi1/1/1
@@ -845,7 +891,7 @@ wr
 
 ```
 
-## Multislayer Switch 4
+### Multislayer Switch 4
 ```bash
 
 enable
@@ -893,3 +939,15 @@ end
 wr
 
 ```
+
+## Configuración DHCP
+### Multilayer Switch 2
+
+```bash
+interface vlan 99
+ ip helper-address 10.4.33.42
+ no shutdown
+end
+wr
+```
+
