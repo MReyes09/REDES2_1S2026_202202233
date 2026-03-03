@@ -54,6 +54,21 @@ Para ~20 enlaces (ej. MAN entre 4 MSW3650: 6 enlaces; Core-Distribución IZQ: 2;
 | 2. | 10.4.33.12/30 | MS9 | 8 | 10.4.33.13 | MS3 | 8 | 10.4.33.14 |
 | 3. | 10.4.33.16/30 | MS11 | 6 | 10.4.33.17 | MS5 | 6 | 10.4.33.18 |
 
+### Tabla para el edificio Central
+| No. | Subred | Switch1 | Puerto | ip | Switch2 | Puerto | ip |
+|-----|--------|---------|---------|----|---------|---------|----|
+| 1. | 10.4.33.20/30 | MS2 | gi1/1/1 | 10.4.33.21 | MS1 | gi1/1/1 | 10.4.33.22 |
+| 2. | 10.4.33.24/30 | MS2 | gi1/1/2 | 10.4.33.25 | MS3 | gi1/1/1 | 10.4.33.26 |
+| 3. | 10.4.33.28/30 | MS1 | gi1/1/2 | 10.4.33.29 | MS3 | gi1/1/2 | 10.4.33.30 |
+| 4. | 10.4.33.32/30 | MS1 | gi1/1/3 | 10.4.33.33 | MS4 | gi1/1/1 | 10.4.33.34 |
+| 5. | 10.4.33.36/30 | MS4 | gi1/1/2 | 10.4.33.37 | MS3 | gi1/1/3 | 10.4.33.38 |
+
+### Tabla para el edificio de servidores
+| No. | Subred | Switch1 | Puerto | ip | Switch2 | Puerto | ip |
+|-----|--------|---------|---------|----|---------|---------|----|
+| 1. | 10.4.33.40/30 | MS4 | gi1/0/1 | 10.4.33.41 | DHCP1 | fa0 | 10.4.33.42 |
+| 2. | 10.4.33.44/30 | MS4 | gi1/0/2 | 10.4.33.45 | DHCP2 | fa0 | 10.4.33.46 |
+
 ## Instrucciones de Uso
 - Asigna VLANs: 10=NaranjaIZQ, 20=VerdeIZQ, 30=NaranjaDER, 40=VerdeDER, 99=ADMIN.
 - En Packet Tracer: configura SVIs en MSW con gateway, pools DHCP con estos rangos (excluye gateway).
@@ -666,7 +681,7 @@ interface vlan 40
  ip add 192.188.33.25 255.255.255.248
 exit
 
-router eigrp 2
+router eigrp 1
  network 192.188.33.0 0.0.0.255
  network 10.4.33.16 0.0.0.3
  no auto-summary
@@ -680,7 +695,7 @@ wr
 ```bash
 conf t
 
-router eigrp 2
+router eigrp 1
  network 10.4.33.16 0.0.0.3
  network 10.4.33.8 0.0.0.3
  no auto-summary
@@ -693,7 +708,7 @@ wr
 ```bash
 conf t
 
-router eigrp 2
+router eigrp 1
  network 10.4.33.8 0.0.0.3
  network 10.4.33.12 0.0.0.3
  no auto-summary
@@ -706,10 +721,175 @@ wr
 ```bash
 conf t
 
-router eigrp 2
+router eigrp 1
  network 10.4.33.12 0.0.0.3
  no auto-summary
  end
+wr
+
+```
+
+# Configuración Switches Central
+
+## Multislayer Switch 2
+```bash
+
+enable
+conf t
+hostname MULT_SWITCH_2
+banner motd #
+*************************************************
+*          BIENVENIDO AL MULT_SWITCH 2          *
+*************************************************
+#
+
+! Creacion VLAN ADMIN
+
+ip routing
+
+vlan 99
+ name ADMIN
+
+! Interfaz para ADMIN
+interface vlan 99
+ ip add 192.188.33.33 255.255.255.248
+ no shutdown
+
+interface gi1/0/1
+ switchport mode access
+ switchport access vlan 99
+ no shutdown
+exit
+
+interface gi1/1/1
+ no switchport
+ ip add 10.4.33.21 255.255.255.252
+ no shutdown
+exit
+
+interface gi1/1/2
+ no switchport
+ ip add 10.4.33.25 255.255.255.252
+ no shutdown
+exit
+
+router eigrp 1
+ network 192.188.33.0 0.0.0.255
+ network 10.4.33.20 0.0.0.3
+ network 10.4.33.24 0.0.0.3
+ no auto-summary
+end
+wr
+
+```
+
+## Multislayer Switchport 1
+
+```bash
+interface gi1/1/1
+ no switchport
+ ip add 10.4.33.22 255.255.255.252
+ no shutdown
+exit
+
+interface gi1/1/2
+ no switchport
+ ip add 10.4.33.29 255.255.255.252
+ no shutdown
+exit
+
+interface gi1/1/3
+ no switchport
+ ip add 10.4.33.33 255.255.255.252
+ no shutdown
+exit
+
+router eigrp 1
+ network 10.4.33.20 0.0.0.3
+ network 10.4.33.28 0.0.0.3
+ network 10.4.33.32 0.0.0.3
+ no auto-summary
+end
+wr
+
+```
+
+## Multislayer Switchport 3
+
+```bash
+interface gi1/1/1
+ no switchport
+ ip add 10.4.33.26 255.255.255.252
+ no shutdown
+exit
+
+interface gi1/1/2
+ no switchport
+ ip add 10.4.33.30 255.255.255.252
+ no shutdown
+exit
+
+interface gi1/1/3
+ no switchport
+ ip add 10.4.33.38 255.255.255.252
+ no shutdown
+exit
+
+router eigrp 1
+ network 10.4.33.24 0.0.0.3
+ network 10.4.33.28 0.0.0.3
+ network 10.4.33.36 0.0.0.3
+ no auto-summary
+end
+wr
+
+```
+
+## Multislayer Switch 4
+```bash
+
+enable
+conf t
+hostname MULT_SWITCH_4
+banner motd #
+*************************************************
+*          BIENVENIDO AL MULT_SWITCH 4          *
+*************************************************
+#
+
+ip routing
+
+interface gi1/1/1
+ no switchport
+ ip add 10.4.33.34 255.255.255.252
+ no shutdown
+exit
+
+interface gi1/1/2
+ no switchport
+ ip add 10.4.33.37 255.255.255.252
+ no shutdown
+exit
+
+interface gi1/0/1
+ no switchport
+ ip add 10.4.33.41 255.255.255.252
+ no shutdown
+exit
+
+interface gi1/0/2
+ no switchport
+ ip add 10.4.33.45 255.255.255.252
+ no shutdown
+exit
+
+router eigrp 1
+ network 10.4.33.32 0.0.0.3
+ network 10.4.33.36 0.0.0.3
+ network 10.4.33.40 0.0.0.3
+ network 10.4.33.44 0.0.0.3
+ no auto-summary
+end
 wr
 
 ```
