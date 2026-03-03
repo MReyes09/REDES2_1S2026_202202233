@@ -762,12 +762,12 @@ wr
 ## Configuración DHCP
 ```bash
 interface vlan 30
- ip helper-address 10.4.33.42
+ ip helper-address 10.4.33.46
  no shutdown
 exit
 
 interface vlan 40
- ip helper-address 10.4.33.42
+ ip helper-address 10.4.33.46
  no shutdown
 end
 wr
@@ -950,4 +950,19 @@ interface vlan 99
 end
 wr
 ```
+
+# Edificio son servidores DHCP
+## Configuración de servidores
+### Servidor DHCP 1
+| VLAN | Gateway | DNS | Start IP Address | SubnetMask | Maximum Number of Users |
+|------|---------|-----|------------------|------------|-------------------------|
+| 10 | 192.188.33.1 | 0.0.0.0 | 192.188.33.2 | 255.255.255.248 | 4 |
+| 20 | 192.188.33.9 | 0.0.0.0 | 192.188.33.10 | 255.255.255.248 | 4 |
+| 99 | 192.188.33.33 | 0.0.0.0 | 192.188.33.34 | 255.255.255.248 | 4 |
+
+### Servidor DHCP 2
+| VLAN | Gateway | DNS | Start IP Address | SubnetMask | Maximum Number of Users |
+|------|---------|-----|------------------|------------|-------------------------|
+| 30 | 192.188.33.17 | 0.0.0.0 | 192.188.33.18 | 255.255.255.248 | 4 |
+| 40 | 192.188.33.25 | 0.0.0.0 | 192.188.33.26 | 255.255.255.248 | 4 |
 
