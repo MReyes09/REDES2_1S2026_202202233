@@ -1,4 +1,95 @@
-# DOCUMENTACION
+<div align="center">
+
+UNIVERSIDAD SAN CARLOS DE GUATEMALA  
+FACULTAD DE INGENIERÍA  
+LABORATORIO DE REDES DE COMPUTADORAS 2  
+SECCIÓN N  
+
+**Documentación de configuración de red**  
+(VLANs, enlaces punto-a-punto, EtherChannel, EIGRP, DHCP, ACLs)
+
+**Estudiante:** Matthew Emmanuel Reyes Melgar  
+**Carné:** 202202233  
+
+Guatemala — Marzo 2026
+
+</div>
+
+---
+
+## Índice
+
+- [Documentacion](#documentacion)
+  - [Topologia](#topologia)
+  - [Tabla Subredes VLANs (192.188.33.0/24 VLSM)](#tabla-subredes-vlans-19218833024-vlsm)
+  - [Tabla Enlaces Punto-a-Punto (10.4.33.0/24 FLSM /30)](#tabla-enlaces-punto-a-punto-10433024-flsm-30)
+    - [Tabla port channel edificio izquierdo](#tabla-port-channel-edificio-izquierdo)
+    - [Tabla para el edificio izquierdo](#tabla-para-el-edificio-izquierdo)
+    - [Tabla port channel edificio derecho](#tabla-port-channel-edificio-derecho)
+    - [Tabla para el edificio derecho](#tabla-para-el-edificio-derecho)
+    - [Tabla para el edificio Central](#tabla-para-el-edificio-central)
+    - [Tabla para el edificio de servidores](#tabla-para-el-edificio-de-servidores)
+  - [Instrucciones de Uso](#instrucciones-de-uso)
+- [Configuración de Switches Edificio Izquierdo](#configuración-de-switches-edificio-izquierdo)
+  - [Configuraciones básicas, creación y distribución de vlans](#configuraciones-básicas-creación-y-distribución-de-vlans)
+    - [Multislayer Switch 1](#multislayer-switch-1)
+    - [Multislayer Switch 0](#multislayer-switch-0)
+    - [Multislayer Switch 6](#multislayer-switch-6)
+    - [Switch 0](#switch-0)
+    - [Switch 1](#switch-1)
+  - [Configuraciones de LACP](#configuraciones-de-lacp)
+    - [Switch 0](#switch-0-1)
+    - [Switch 1](#switch-1-1)
+    - [Multislayer Switch 0](#multislayer-switch-0-1)
+    - [Multislayer Switch 6](#multislayer-switch-6-1)
+    - [Multislayer Switch 1](#multislayer-switch-1-1)
+  - [Configuración EIGRP](#configuración-eigrp)
+    - [Multislayer Switch 6](#multislayer-switch-6-2)
+    - [Multislayer Switch 1](#multislayer-switch-1-2)
+    - [Multislayer Switch 0](#multislayer-switch-0-2)
+  - [Configuración General DHCP](#configuración-general-dhcp)
+    - [Multilayer Switch 0](#multilayer-switch-0)
+    - [Multilayer Switch 6](#multilayer-switch-6)
+  - [Configuración ACLs](#configuración-acls)
+    - [Multislayer Switch 0 y 6](#multislayer-switch-0-y-6)
+- [Configuración de Switches Edificio Derecho](#configuración-de-switches-edificio-derecho)
+  - [Configuraciones básicas, creación y distribución de vlans](#configuraciones-básicas-creación-y-distribución-de-vlans-1)
+    - [Multilayer Switch  11](#multilayer-switch--11)
+    - [Switch 2](#switch-2)
+    - [Switch 3](#switch-3)
+  - [Configuración PagP](#configuración-pagp)
+    - [Multislayer Switch 11](#multislayer-switch-11)
+    - [Multislayer Switch 5](#multislayer-switch-5)
+    - [Multislayer Switch 9](#multislayer-switch-9)
+    - [Multislayer Switch 3](#multislayer-switch-3)
+  - [Configuración EIGRP](#configuración-eigrp-1)
+    - [Multslayer Switch 11](#multslayer-switch-11)
+    - [Multslayer Switch 5](#multslayer-switch-5)
+    - [Multslayer Switch 9](#multslayer-switch-9)
+    - [Multslayer Switch 3](#multslayer-switch-3)
+  - [Configuración DHCP](#configuración-dhcp)
+    - [Multilayer Switch 11](#multilayer-switch-11)
+  - [Configuración ACLs](#configuración-acls-1)
+    - [Multilayer Switch 11](#multilayer-switch-11-1)
+- [Configuración Switches Central](#configuración-switches-central)
+  - [Configuración EIGRP](#configuración-eigrp-2)
+    - [Multislayer Switch 2](#multislayer-switch-2)
+    - [Multislayer Switchport 1](#multislayer-switchport-1)
+    - [Multislayer Switchport 3](#multislayer-switchport-3)
+    - [Multislayer Switch 4](#multislayer-switch-4)
+  - [Configuración DHCP](#configuración-dhcp-1)
+    - [Multilayer Switch 2](#multilayer-switch-2)
+- [Edificio con servidores DHCP](#edificio-con-servidores-dhcp)
+  - [Configuración de servidores](#configuración-de-servidores)
+    - [Servidor DHCP 1](#servidor-dhcp-1)
+    - [Servidor DHCP 2](#servidor-dhcp-2)
+
+---
+
+# Documentacion
+
+## Topologia
+![Topologia](../img/topologia_proyecto1.png)
 
 ## Tabla Subredes VLANs (192.188.33.0/24 VLSM)
 Asigna gateways en primera usable (SVI o router-on-stick). Usa rangos para PCs/DHCP.
@@ -31,7 +122,7 @@ Para ~20 enlaces (ej. MAN entre 4 MSW3650: 6 enlaces; Core-Distribución IZQ: 2;
 | MS6 | 3 | fa0/6-8 |
 | MS6 | 4 | f0/3-5 |
 
-#### Tabla para el edificio izquierdo
+### Tabla para el edificio izquierdo
 | No. | Subred | Switch1 | No-Portchannel | ip | Switch2 | No-Portchannel | ip |
 |-----|--------|---------|----------------|----|---------|----------------|----|
 | 1. | 10.4.33.0/30 | MS6 | 4 | 10.4.33.1 | MS1 | 4 | 10.4.33.2 |
@@ -72,7 +163,7 @@ Para ~20 enlaces (ej. MAN entre 4 MSW3650: 6 enlaces; Core-Distribución IZQ: 2;
 ## Instrucciones de Uso
 - Asigna VLANs: 10=NaranjaIZQ, 20=VerdeIZQ, 30=NaranjaDER, 40=VerdeDER, 99=ADMIN.
 - En Packet Tracer: configura SVIs en MSW con gateway, pools DHCP con estos rangos (excluye gateway).
-- Copia tablas a README.md con capturas. Ajusta distribución PCs si tu topología difiere (dime #PCs por VLAN exactos para recalcular). 
+- Copia tablas a README.md  
 
 ---
 
@@ -546,7 +637,7 @@ spanning-tree mode pvst
 do wr
 ```
 
-## Switch 2
+### Switch 2
 ```bash
 
 enable
@@ -581,7 +672,7 @@ spanning-tree mode pvst
 do wr
 ```
 
-## Switch 3
+### Switch 3
 ```bash
 
 enable
@@ -1027,7 +1118,7 @@ end
 wr
 ```
 
-# Edificio son servidores DHCP
+# Edificio con servidores DHCP
 ## Configuración de servidores
 ### Servidor DHCP 1
 | VLAN | Gateway | DNS | Start IP Address | SubnetMask | Maximum Number of Users |
