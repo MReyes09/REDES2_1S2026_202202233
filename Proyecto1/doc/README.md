@@ -461,6 +461,44 @@ end
 wr
 ```
 
+## Configuración ACLs
+
+### Multislayer Switch 0 y 6
+```bash
+ip access-list extended VLAN10_ACL
+ remark Admin(99)->VLAN10 y reply
+ permit icmp 192.188.33.32 0.0.0.7 192.188.33.0 0.0.0.7 echo
+ permit icmp 192.188.33.0 0.0.0.7 192.188.33.32 0.0.0.7 echo-reply
+ deny icmp 192.188.33.0 0.0.0.7 192.188.33.32 0.0.0.7 echo
+ remark VLAN10 <-> VLAN30 (misma color)
+ permit ip 192.188.33.0 0.0.0.7 192.188.33.16 0.0.0.7
+ permit ip 192.188.33.16 0.0.0.7 192.188.33.0 0.0.0.7
+ remark Deny a Verde (20/40) y resto
+ deny ip 192.188.33.0 0.0.0.7 192.188.33.8 0.0.0.7
+ deny ip 192.188.33.0 0.0.0.7 192.188.33.24 0.0.0.7
+ deny ip any any
+interface vlan 10
+ ip access-group VLAN10_ACL in
+exit
+
+ip access-list extended VLAN20_ACL
+ remark Admin(99)->VLAN20 y reply
+ permit icmp 192.188.33.32 0.0.0.7 192.188.33.8 0.0.0.7 echo
+ permit icmp 192.188.33.8 0.0.0.7 192.188.33.32 0.0.0.7 echo-reply
+ deny icmp 192.188.33.8 0.0.0.7 192.188.33.32 0.0.0.7 echo
+ remark VLAN20 <-> VLAN40 (misma color Verde)
+ permit ip 192.188.33.8 0.0.0.7 192.188.33.24 0.0.0.7
+ permit ip 192.188.33.24 0.0.0.7 192.188.33.8 0.0.0.7
+ remark Deny a Naranja (10/30) y resto
+ deny ip 192.188.33.8 0.0.0.7 192.188.33.0 0.0.0.7
+ deny ip 192.188.33.8 0.0.0.7 192.188.33.16 0.0.0.7
+ deny ip any any
+interface vlan 20
+ ip access-group VLAN20_ACL in
+end
+wr
+
+```
 
 ---
 # Configuración de Switches Edificio Derecho
@@ -760,6 +798,7 @@ wr
 ```
 
 ## Configuración DHCP
+### Multilayer Switch 11
 ```bash
 interface vlan 30
  ip helper-address 10.4.33.46
@@ -772,6 +811,43 @@ interface vlan 40
 end
 wr
 ```
+
+## Configuración ACLs
+### Multilayer Switch 11
+```bash
+ip access-list extended VLAN30_ACL
+ remark Admin(99)->VLAN30 y reply
+ permit icmp 192.188.33.32 0.0.0.7 192.188.33.16 0.0.0.7 echo
+ permit icmp 192.188.33.16 0.0.0.7 192.188.33.32 0.0.0.7 echo-reply
+ deny icmp 192.188.33.16 0.0.0.7 192.188.33.32 0.0.0.7 echo
+ remark VLAN30 <-> VLAN10 (misma color Naranja)
+ permit ip 192.188.33.16 0.0.0.7 192.188.33.0 0.0.0.7
+ permit ip 192.188.33.0 0.0.0.7 192.188.33.16 0.0.0.7
+ remark Deny a Verde (20/40) y resto
+ deny ip 192.188.33.16 0.0.0.7 192.188.33.8 0.0.0.7
+ deny ip 192.188.33.16 0.0.0.7 192.188.33.24 0.0.0.7
+ deny ip any any
+interface vlan 30
+ ip access-group VLAN30_ACL in
+exit
+ip access-list extended VLAN40_ACL
+ remark Admin(99)->VLAN40 y reply
+ permit icmp 192.188.33.32 0.0.0.7 192.188.33.24 0.0.0.7 echo
+ permit icmp 192.188.33.24 0.0.0.7 192.188.33.32 0.0.0.7 echo-reply
+ deny icmp 192.188.33.24 0.0.0.7 192.188.33.32 0.0.0.7 echo
+ remark VLAN40 <-> VLAN20 (misma color Verde)
+ permit ip 192.188.33.24 0.0.0.7 192.188.33.8 0.0.0.7
+ permit ip 192.188.33.8 0.0.0.7 192.188.33.24 0.0.0.7
+ remark Deny a Naranja (10/30) y resto
+ deny ip 192.188.33.24 0.0.0.7 192.188.33.0 0.0.0.7
+ deny ip 192.188.33.24 0.0.0.7 192.188.33.16 0.0.0.7
+ deny ip any any
+interface vlan 40
+ ip access-group VLAN40_ACL in
+end
+wr
+```
+
 
 # Configuración Switches Central
 
