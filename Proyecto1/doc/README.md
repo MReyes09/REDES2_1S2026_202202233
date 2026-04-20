@@ -592,6 +592,7 @@ wr
 ```
 
 ---
+
 # Configuración de Switches Edificio Derecho
 
 ## Configuraciones básicas, creación y distribución de vlans
